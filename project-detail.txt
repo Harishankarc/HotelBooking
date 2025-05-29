@@ -1,0 +1,42 @@
+Here is your Task :-
+
+#Project Setup
+Initialize a new NestJS project using the Nest CLI.
+Configure the project to use TypeScript.
+Install and set up Prisma in the project.
+Configure a PostgreSQL database and connect it to Prisma.
+
+Define the following models in the Prisma schema (schema.prisma):
+* Room:
+    * id: Auto-incrementing integer (primary key).
+    * roomNumber: String (required, unique, max length 10).
+    * type: Enum with values SINGLE, DOUBLE, SUITE (default: SINGLE).
+    * pricePerNight: Float (required).
+    * isAvailable: Boolean (default: true).
+    * createdAt: DateTime (default: current timestamp).
+    * updatedAt: DateTime (updated on changes).
+* Booking:
+    * id: Auto-incrementing integer (primary key).
+    * roomId: Integer (foreign key referencing Room).
+    * guestName: String (required, max length 100).
+    * checkInDate: DateTime (required).
+    * checkOutDate: DateTime (required).
+    * totalPrice: Float (required).
+    * createdAt: DateTime (default: current timestamp).
+    * updatedAt: DateTime (updated on changes).
+* Ensure a one-to-many relationship between Room and Booking (one room can have multiple bookings).
+* Generate and apply Prisma migrations to create the database tables.
+#API Endpoints
+Implement the following RESTful endpoints:
+* Rooms:
+    * POST /rooms: Create a new room.
+    * GET /rooms: Retrieve a list of all rooms.
+    * GET /rooms/:id: Retrieve a room by its ID.
+    * PATCH /rooms/:id: Update a room’s details (e.g., price, availability).
+    * DELETE /rooms/:id: Delete a room by its ID.
+* Bookings:
+    * POST /bookings: Create a new booking (ensure the room is available and update isAvailable to false).
+    * GET /bookings: Retrieve a list of all bookings.
+    * GET /bookings/:id: Retrieve a booking by its ID.
+    * PATCH /bookings/:id: Update a booking’s details (e.g., check-in/check-out dates, guest name).
+    * DELETE /bookings/:id: Delete a booking and set the room’s isAvailable to true.

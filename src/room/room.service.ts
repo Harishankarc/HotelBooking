@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from 'generated/prisma';
 import { DatabaseService } from 'src/database/database.service';
 
@@ -8,53 +8,74 @@ export class RoomService {
   constructor(private readonly databaseService: DatabaseService){}
 
   async create(createRoomDto: Prisma.RoomCreateInput) {
-    return this.databaseService.room.create({
-      data: createRoomDto,
-    });
+      try{
+        return this.databaseService.room.create({
+          data: createRoomDto,
+        });
+      }catch(e){
+        throw new HttpException("Cannot create room", HttpStatus.INTERNAL_SERVER_ERROR)
+      }
   }
 
   async findAll() {
-    const rooms = await this.databaseService.room.findMany();
-    if(!rooms){
-      throw new NotFoundException('Rooms not found');
-    }
-    return rooms;
+      try{
+        const rooms = await this.databaseService.room.findMany();
+        if(rooms.length === 0 || !rooms){
+          throw new HttpException('Rooms not found',HttpStatus.NOT_FOUND);
+        }
+        return rooms;
+      }catch(e){
+        throw new HttpException("Cannot find rooms", HttpStatus.INTERNAL_SERVER_ERROR)
+      }
+
   }
 
   async findOne(id: number) {
-    const room = await this.databaseService.room.findUnique({
-      where: {
-        id,
+    try{
+      const room = await this.databaseService.room.findUnique({
+        where: {
+          id,
+        }
+      });
+      if(!room){
+        throw new HttpException(`Room not found with id: ${id}`,HttpStatus.NOT_FOUND);
       }
-    });
-    if(!room){
-      throw new NotFoundException(`Room not found with id: ${id}`);
+      return room;
+    }catch(e){
+      throw new HttpException("Cannot find room", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    return room;
   }
 
   async update(id: number, updateRoomDto: Prisma.RoomUpdateInput) {
-    const room = await this.databaseService.room.update({
-      where:{
-        id,
-      },
-      data: updateRoomDto,
-    });
-    if(!room){
-      throw new NotFoundException(`Room not found with id: ${id} to update`);
+    try{
+      const room = await this.databaseService.room.update({
+        where:{
+          id,
+        },
+        data: updateRoomDto,
+      });
+      if(!room){
+        throw new NotFoundException(`Room not found with id: ${id} to update`);
+      }
+      return room;
+    }catch(e){
+      throw new HttpException("Cannot update room", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    return room;
   }
 
   async remove(id: number) {
-    const room = await this.databaseService.room.delete({
-      where:{
-        id,
+    try{
+      const room = await this.databaseService.room.delete({
+        where:{
+          id,
+        }
+      });
+      if(!room){
+        throw new NotFoundException(`Room not found with id: ${id} to delete`);
       }
-    });
-    if(!room){
-      throw new NotFoundException(`Room not found with id: ${id} to delete`);
+      return room;
+    }catch(e){
+      throw new HttpException("Cannot delete room", HttpStatus.INTERNAL_SERVER_ERROR)
     }
-    return room;
   }
 }

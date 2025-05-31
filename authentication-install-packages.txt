@@ -1,0 +1,2 @@
+npm install @nestjs/passport passport passport-local passport-jwt @nestjs/jwt
+npm install --save-dev @types/passport-local @types/passport-jwt

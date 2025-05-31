@@ -44,3 +44,11 @@ model Booking {
 
   room Room @relation(fields: [roomId], references: [id])
 }
+
+model Users{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  email String @unique @db.VarChar(100)
+  password String @db.VarChar(100)
+  refreshToken String? 
+}
